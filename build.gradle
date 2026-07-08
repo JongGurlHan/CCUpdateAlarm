@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// 로컬 개발 편의: `.\gradlew.bat bootRun` 만으로 local 프로파일 활성화(application-local.yml 로드).
+// npm 의 "start:dev" 스크립트처럼 긴 옵션을 여기에 숨겨둔 것.
+// 참고: 이 설정은 bootRun(개발 실행)에만 적용되며, 배포용 `java -jar` 에는 영향 없음.
+tasks.named('bootRun') {
+    systemProperty 'spring.profiles.active', 'local'
+}

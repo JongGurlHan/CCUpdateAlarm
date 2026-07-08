@@ -1,0 +1,32 @@
+# ───────────────────────────────────────────────────────────────────────────
+# application-local.yml 예시 (로컬 개발용 시크릿)
+#
+# 사용법
+#   1) 이 파일을 같은 폴더(프로젝트 루트)에 application-local.yml 로 복사
+#        PowerShell:  Copy-Item application-local.yml.example application-local.yml
+#        bash/git:    cp application-local.yml.example application-local.yml
+#   2) 아래 값을 실제 값으로 채운다 (따옴표 유지 권장)
+#   3) 실행: .\gradlew.bat bootRun   (local 프로파일은 build.gradle 에 내장됨)
+#
+# 주의
+#   - 이 .example 파일만 커밋하고, 실제 application-local.yml 은 커밋하지 않는다
+#     (.gitignore 에 이미 제외되어 있음).
+#   - 반드시 프로젝트 "루트"에 두어야 한다. src/main/resources/ 아래 두면
+#     빌드 시 jar 안에 시크릿이 박히므로 금지.
+#
+# 각 값 얻는 곳
+#   telegram.bot-token    : @BotFather 에서 /newbot → 발급된 토큰 (형식 123456:ABC...)
+#   telegram.bot-username : /newbot 때 정한 봇 username (@ 제외, 예: cc_notify_bot)
+#   telegram.admin-chat-id: 운영 장애 알림 받을 본인 chat_id
+#                           (봇에 아무 메시지나 보낸 뒤
+#                            https://api.telegram.org/bot<봇토큰>/getUpdates 의
+#                            message.chat.id, 또는 @userinfobot 로 확인)
+#   anthropic.api-key     : console.anthropic.com → API Keys (결제/크레딧 필요)
+# ───────────────────────────────────────────────────────────────────────────
+app:
+  telegram:
+    bot-token: "123456:ABC-your-bot-token"
+    bot-username: "cc_notify_bot"
+    admin-chat-id: "12345678"
+  anthropic:
+    api-key: "sk-ant-..."

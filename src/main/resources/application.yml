@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: cc-notify
+  datasource:
+    url: jdbc:h2:file:./data/ccnotify;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+
+server:
+  port: 8080
+
+app:
+  changelog-url: https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
+  changelog-web-url: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
+  # 폴링 주기 (예: 15m, 30s, 1h). @Scheduled fixedDelay 로 사용.
+  poll-interval: 15m
+  initial-delay: 15s
+  # true 이면 실제 발송 대신 로그만 남김 (개발/테스트용)
+  dry-run: false
+  # 최초 실행(처리 이력 없음) 시 현재 최신까지는 baseline 으로만 기록하고 발송하지 않음
+  baseline-on-first-run: true
+  # 웹 신청 후 /start 로 연결을 확정해야 하는 제한 시간
+  connect-token-ttl: 10m
+  # 공개 접속 base URL (해지 링크 생성용). 로컬은 http://localhost:8080
+  public-base-url: http://localhost:8080
+  telegram:
+    bot-token: ${TELEGRAM_BOT_TOKEN:}
+    bot-username: ${TELEGRAM_BOT_USERNAME:}
+    admin-chat-id: ${TELEGRAM_ADMIN_CHAT_ID:}
+    api-base-url: https://api.telegram.org
+    # 발송 간 최소 간격(ms) - Telegram 레이트리밋 대비 스로틀
+    send-throttle-ms: 50
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY:}
+    base-url: https://api.anthropic.com
+    model: claude-sonnet-5
+    version: "2023-06-01"
+    max-tokens: 2000
+
+logging:
+  level:
+    com.example.ccnotify: INFO

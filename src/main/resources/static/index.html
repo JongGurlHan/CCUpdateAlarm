@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Claude Code 릴리즈 알림</title>
+    <style>
+        :root { color-scheme: light dark; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 56px 20px;
+            line-height: 1.6;
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 8px; }
+        p.lead { opacity: 0.8; margin-top: 0; }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            margin-top: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-telegram { background: #229ED9; color: #fff; }
+        .btn-telegram:disabled { opacity: 0.6; cursor: progress; }
+        .btn-slack { background: #eee; color: #888; cursor: not-allowed; }
+        @media (prefers-color-scheme: dark) { .btn-slack { background: #333; color: #888; } }
+        .note { font-size: 0.85rem; opacity: 0.7; margin-top: 24px; }
+        #msg { margin-top: 16px; font-size: 0.9rem; min-height: 1.2em; }
+        .err { color: #d33; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Claude Code 릴리즈 알림</h1>
+    <p class="lead">Claude Code에 새 릴리즈 노트가 올라오면 한국어로 번역해 보내드립니다.</p>
+
+    <button id="telegram-btn" class="btn btn-telegram" onclick="subscribeTelegram()">
+        ✈️ Telegram으로 받기
+    </button>
+    <button class="btn btn-slack" disabled title="준비 중">
+        💬 Slack으로 받기 (준비 중)
+    </button>
+
+    <div id="msg"></div>
+
+    <p class="note">
+        버튼을 누르면 Telegram 봇으로 이동합니다. 봇에서 <b>시작</b>을 누르면 구독이 완료됩니다.<br>
+        해지는 봇에 <code>/stop</code> 을 입력하거나 완료 메시지의 해지 링크로 할 수 있어요.
+    </p>
+
+    <script>
+        async function subscribeTelegram() {
+            const btn = document.getElementById('telegram-btn');
+            const msg = document.getElementById('msg');
+            msg.textContent = '';
+            msg.className = '';
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/subscribe/telegram', { method: 'POST' });
+                const data = await res.json();
+                if (res.ok && data.deepLink) {
+                    msg.textContent = 'Telegram으로 이동합니다...';
+                    window.location.href = data.deepLink;
+                } else {
+                    msg.textContent = data.error || '요청을 처리할 수 없습니다.';
+                    msg.className = 'err';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                msg.textContent = '네트워크 오류가 발생했습니다.';
+                msg.className = 'err';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
